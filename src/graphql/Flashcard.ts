@@ -97,5 +97,25 @@ export const FlashcardMutation = extendType({
         return newFlashcard;
       },
     });
+
+    t.nonNull.field('deleteFlashcard', {
+      type: 'Flashcard',
+      args: {
+        id: nonNull(intArg()),
+      },
+
+      resolve(parent, args, context) {
+        const { id } = args;
+        const { userId } = context;
+
+        if (!userId) {
+          throw new Error('Cannot delete flashcard without logging in.');
+        }
+
+        return context.prisma.flashcard.delete({
+          where: { id },
+        });
+      },
+    });
   },
 });

@@ -17,6 +17,7 @@ type Flashcard {
 
 type Mutation {
   createFlashcard(answer: String!, question: String!): Flashcard!
+  deleteFlashcard(id: Int!): Flashcard!
   login(email: String!, password: String!): AuthPayload!
   signup(email: String!, name: String!, password: String!): AuthPayload!
   updateFlashcard(answer: String, id: Int!, isDone: Boolean, question: String): Flashcard!

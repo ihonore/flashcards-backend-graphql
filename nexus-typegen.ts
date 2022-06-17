@@ -71,6 +71,7 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     createFlashcard: NexusGenRootTypes['Flashcard']; // Flashcard!
+    deleteFlashcard: NexusGenRootTypes['Flashcard']; // Flashcard!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     updateFlashcard: NexusGenRootTypes['Flashcard']; // Flashcard!
@@ -100,6 +101,7 @@ export interface NexusGenFieldTypeNames {
   }
   Mutation: { // field return type name
     createFlashcard: 'Flashcard'
+    deleteFlashcard: 'Flashcard'
     login: 'AuthPayload'
     signup: 'AuthPayload'
     updateFlashcard: 'Flashcard'
@@ -120,6 +122,9 @@ export interface NexusGenArgTypes {
     createFlashcard: { // args
       answer: string; // String!
       question: string; // String!
+    }
+    deleteFlashcard: { // args
+      id: number; // Int!
     }
     login: { // args
       email: string; // String!
