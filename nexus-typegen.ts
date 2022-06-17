@@ -73,6 +73,7 @@ export interface NexusGenFieldTypes {
     createFlashcard: NexusGenRootTypes['Flashcard']; // Flashcard!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    updateFlashcard: NexusGenRootTypes['Flashcard']; // Flashcard!
   }
   Query: { // field return type
     flashcards: NexusGenRootTypes['Flashcard'][]; // [Flashcard!]!
@@ -101,6 +102,7 @@ export interface NexusGenFieldTypeNames {
     createFlashcard: 'Flashcard'
     login: 'AuthPayload'
     signup: 'AuthPayload'
+    updateFlashcard: 'Flashcard'
   }
   Query: { // field return type name
     flashcards: 'Flashcard'
@@ -127,6 +129,12 @@ export interface NexusGenArgTypes {
       email: string; // String!
       name: string; // String!
       password: string; // String!
+    }
+    updateFlashcard: { // args
+      answer?: string | null; // String
+      id: number; // Int!
+      isDone?: boolean | null; // Boolean
+      question?: string | null; // String
     }
   }
 }

@@ -1,4 +1,12 @@
-import { extendType, nonNull, objectType, stringArg } from 'nexus';
+import {
+  booleanArg,
+  extendType,
+  intArg,
+  nonNull,
+  nullable,
+  objectType,
+  stringArg,
+} from 'nexus';
 
 export const Flashcard = objectType({
   name: 'Flashcard',
@@ -36,8 +44,8 @@ export const FlashcardMutation = extendType({
     t.nonNull.field('createFlashcard', {
       type: 'Flashcard',
       args: {
-        question:nonNull(stringArg()),
-        answer:nonNull(stringArg()),
+        question: nonNull(stringArg()),
+        answer: nonNull(stringArg()),
       },
 
       resolve(parent, args, context) {
@@ -53,6 +61,36 @@ export const FlashcardMutation = extendType({
             question,
             answer,
             postedBy: { connect: { id: userId } },
+          },
+        });
+
+        return newFlashcard;
+      },
+    });
+
+    t.nonNull.field('updateFlashcard', {
+      type: 'Flashcard',
+      args: {
+        question: nullable(stringArg()),
+        answer: nullable(stringArg()),
+        isDone: nullable(booleanArg()),
+        id: nonNull(intArg()),
+      },
+
+      resolve(parent, args, context) {
+        const { question, answer, isDone, id } = args;
+        const { userId } = context;
+
+        if (!userId) {
+          throw new Error('Cannot update flashcard without logging in.');
+        }
+
+        const newFlashcard = context.prisma.flashcard.update({
+          where: { id },
+          data: {
+            ...(question && { question }),
+            ...(answer && { answer }),
+            ...(isDone != null && { isDone }),
           },
         });
 
