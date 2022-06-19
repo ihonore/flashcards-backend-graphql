@@ -1,7 +1,12 @@
+import { Prisma } from '@prisma/client';
 import {
+  arg,
   booleanArg,
+  enumType,
   extendType,
+  inputObjectType,
   intArg,
+  list,
   nonNull,
   nullable,
   objectType,
@@ -15,6 +20,7 @@ export const Flashcard = objectType({
     t.nonNull.string('question');
     t.nonNull.string('answer');
     t.nonNull.boolean('isDone');
+    t.nonNull.dateTime('createdAt');
     t.field('postedBy', {
       type: 'User',
       resolve(parent, args, context) {
@@ -26,13 +32,83 @@ export const Flashcard = objectType({
   },
 });
 
+export const FlashcardOrderByInput = inputObjectType({
+  name: 'FlashcardOrderByInput',
+  definition(t) {
+    t.field('question', { type: Sort });
+    t.field('answer', { type: Sort });
+    t.field('createdAt', { type: Sort });
+  },
+});
+
+export const Sort = enumType({
+  name: 'Sort',
+  members: ['asc', 'desc'],
+});
+
+export const AllFlashcards = objectType({
+  name: 'AllFlashcards',
+  definition(t) {
+    t.nonNull.list.nonNull.field('flashcards', { type: Flashcard });
+    t.nonNull.int('count');
+    t.id('id');
+  },
+});
+
 export const FlashcardQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.nonNull.list.nonNull.field('flashcards', {
-      type: 'Flashcard',
-      resolve(parent, args, context) {
-        return context.prisma.flashcard.findMany();
+    t.nonNull.field('flashcards', {
+      type: 'AllFlashcards',
+
+      args: {
+        filter: stringArg(),
+        skip: intArg(),
+        take: intArg(),
+        orderBy: arg({ type: list(nonNull(FlashcardOrderByInput)) }),
+      },
+      async resolve(parent, args, context) {
+        let flashcards;
+        let count;
+        if (args.filter === 'true' || args.filter === 'false') {
+          const isDone = args.filter === 'true' ? true : false;
+
+          flashcards = context.prisma.flashcard.findMany({
+            where: { isDone },
+            skip: args?.skip as number | undefined,
+            take: args?.take as number | undefined,
+            orderBy: args?.orderBy as
+              | Prisma.Enumerable<Prisma.LinkOrderByWithRelationInput>
+              | undefined,
+          });
+          count = await context.prisma.flashcard.count({ where: { isDone } });
+        } else {
+          const where = args.filter
+            ? {
+                OR: [
+                  { question: { contains: args.filter } },
+                  { answer: { contains: args.filter } },
+                ],
+              }
+            : {};
+          flashcards = context.prisma.flashcard.findMany({
+            where,
+            skip: args?.skip as number | undefined,
+            take: args?.take as number | undefined,
+            orderBy: args?.orderBy as
+              | Prisma.Enumerable<Prisma.LinkOrderByWithRelationInput>
+              | undefined,
+          });
+
+          count = await context.prisma.flashcard.count({ where });
+        }
+        const id = `main-query:${JSON.stringify(args)}`;
+
+        return {
+          flashcards,
+          count,
+          id,
+        };
       },
     });
   },
