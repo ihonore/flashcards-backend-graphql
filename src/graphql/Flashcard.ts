@@ -78,7 +78,7 @@ export const FlashcardQuery = extendType({
             skip: args?.skip as number | undefined,
             take: args?.take as number | undefined,
             orderBy: args?.orderBy as
-              | Prisma.Enumerable<Prisma.LinkOrderByWithRelationInput>
+              | Prisma.Enumerable<Prisma.FlashcardOrderByWithRelationInput>
               | undefined,
           });
           count = await context.prisma.flashcard.count({ where: { isDone } });
@@ -96,7 +96,7 @@ export const FlashcardQuery = extendType({
             skip: args?.skip as number | undefined,
             take: args?.take as number | undefined,
             orderBy: args?.orderBy as
-              | Prisma.Enumerable<Prisma.LinkOrderByWithRelationInput>
+              | Prisma.Enumerable<Prisma.FlashcardOrderByWithRelationInput>
               | undefined,
           });
 
