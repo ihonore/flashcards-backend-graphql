@@ -6,12 +6,16 @@ import { schema } from './schema';
 export const server = new ApolloServer({
   schema,
   context,
-  introspection: true, // Allow introspection for development and debugging
+  introspection: true,
   plugins: [ApolloServerPluginLandingPageLocalDefault()],
   cors: {
-    origin: '*',
+    origin: [
+      'https://studio.apollographql.com', // Apollo Studio
+      'https://ihonore-flashcards.vercel.app', // Vercel frontend
+    ],
     methods: ['POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   },
 });
 
